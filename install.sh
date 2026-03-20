@@ -104,11 +104,11 @@ if grep -q "slotty_core.sh" "$CONFIG_FILE" 2>/dev/null; then
 else
     # Añadir configuración al shell (apuntando a ~/.slotty/)
     echo "" >> "$CONFIG_FILE"
-    echo "# ==========================================" >> "$CONFIG_FILE"
+    echo "# =========================================" >> "$CONFIG_FILE"
     echo "# SLOTTY - CONFIGURACIÓN" >> "$CONFIG_FILE"
-    echo "# ==========================================" >> "$CONFIG_FILE"
+    echo "# =========================================" >> "$CONFIG_FILE"
     echo "source ~/.slotty/slotty_core.sh" >> "$CONFIG_FILE"
-    echo "PROMPT='$(slotty_prompt_info)'\$PROMPT'" >> "$CONFIG_FILE"
+    echo 'PROMPT="$(slotty_prompt_info)$PROMPT"' >> "$CONFIG_FILE"
     
     echo "✅ Configuración añadida a $CONFIG_FILE"
     echo "🔄 Ejecuta: source $CONFIG_FILE"

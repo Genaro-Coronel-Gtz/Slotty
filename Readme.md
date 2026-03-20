@@ -1,4 +1,8 @@
-# Slotty - Sistema de Gestión de Comandos
+# 🚀 Slotty - Sistema de Gestión de Comandos
+
+<div align="center">
+  <img src="resources/slotty.png" alt="Slotty Logo" width="200" height="200" style="border-radius: 50%; object-fit: cover; border: 4px solid #2E3440;">
+</div>
 
 **Slotty** es un sistema de gestión de comandos con interfaz fuzzy search que te permite organizar, buscar y ejecutar comandos rápidamente desde tu terminal.
 
@@ -7,7 +11,6 @@
 - **Búsqueda Fuzzy** - Encuentra comandos al instante con InquirerPy
 - **Slots Temáticos** - Organiza comandos por categorías (git, docker, python, etc.)
 - **Acceso Rápido** - Configurable con atajos de teclado (F10)
-- **Paleta Propia** - 30 colores vibrantes exclusivos de Slotty
 - **Fácil Configuración** - Instalación automática sin dependencias
 - **Multiplataforma** - macOS, Linux, WSL2 con soporte completo
 - **Binario Nativo** - Ejecutable independiente sin requerir Python
@@ -279,6 +282,11 @@ ls -la ~/.slotty/slotty
 **Para Terminal.app:**
 - Revisa Preferences → Profiles → Keyboard
 - Confirma que el atajo esté configurado correctamente
+- Usa `^U slotty\n` en lugar de `\x15 slotty\n`
+
+**Para Linux:**
+- Verifica que la terminal soporte atajos personalizados
+- Prueba con Ctrl+Alt+F10 si F10 no funciona
 
 ### Problemas de Colores en el Prompt
 
@@ -362,8 +370,8 @@ MIT License - Libre para uso personal y comercial
 
 ## 👥 Créditos
 
-Creado con ❤️ por la comunidad de desarrolladores para mejorar la productividad en la terminal.
-
+Creado con ❤️ para la comunidad de desarrolladores para mejorar la productividad en la terminal, por:
+Genaro Coronel
 ---
 
 **🚀 ¡Instala Slotty hoy y transforma tu experiencia en la terminal!**
@@ -411,58 +419,6 @@ unplug <nombre>
 # Desactivar todos los slots
 unplug
 ```
-
-## ⌨️ Atajo de Teclado (Opcional)
-
-### Para iTerm2 (macOS)
-
-1. **Abre iTerm2** → Settings (Cmd + ,)
-2. **Ve a** Profiles → Keys → Key Bindings
-3. **Haz clic en** + para añadir nuevo binding
-4. **Configura:**
-   - **Keyboard Shortcut:** F10
-   - **Action:** Send Text
-   - **Value:** `\x15 slotty\n`
-
-### Para Terminal.app (macOS Nativa)
-
-1. **Abre Terminal** → Preferences → Profiles → Keyboard
-2. **Haz clic en** + para añadir nuevo atajo
-3. **Configura:**
-   - **Keyboard Shortcut:** F10
-   - **Action:** Send Text
-   - **Value:** `^U slotty\n`
-
-### Para Terminales Linux (GNOME, KDE, etc.)
-
-1. **Abre Preferencias de Terminal**
-2. **Busca** Atajos de Teclado o Key Bindings
-3. **Añade nuevo atajo:**
-   - **Tecla:** F10
-   - **Comando:** `Ctrl+U` + ` slotty` + `Enter`
-
-### Compatibilidad con Powerlevel10k
-
-Si usas **Oh My Zsh + Powerlevel10k**, es **crucial** agregar estas opciones a tu `.zshrc`:
-
-```bash
-# Configuración de historial para Powerlevel10k
-setopt HIST_IGNORE_SPACE
-setopt HIST_NO_STORE
-setopt HIST_VERIFY
-```
-
-**¿Por qué?** Powerlevel10k tiene su propio sistema de historial que ignora el truco del espacio inicial unless estas opciones estén configuradas.
-
-### Códigos de Tecla por Sistema
-
-| Sistema | Ctrl+U | Formato |
-|---------|--------|---------|
-| iTerm2 | `\x15` | Hexadecimal |
-| Terminal.app | `^U` | Caret notation |
-| Linux | `Ctrl+U` | Texto plano |
-
-> **Nota:** En todos los casos, el espacio antes de `slotty` es intencional para evitar que se guarde en el historial (con `HIST_IGNORE_SPACE`).
 
 ## 🏗️ Estructura de Archivos
 
@@ -629,28 +585,15 @@ echo $-
 # Si no, prueba en una terminal normal
 ```
 
-## 🤝 Contribuir
-
-¡Las contribuciones son bienvenidas!
-
-1. Fork del proyecto
-2. Crear una feature branch
-3. Hacer commit de cambios
-4. Push a la branch
-5. Abrir Pull Request
-
 ## 📄 Licencia
 
-MIT License - siéntete libre de usar y modificar.
+MIT License - Libre para uso personal y comercial
 
-## 🆘 Ayuda
+## 👥 Créditos
 
-Si tienes problemas o preguntas:
-
-- 📖 Revisa esta guía
-- 🐛 Abre un issue en GitHub
-- 💬 Contacta al maintainers
+Creado con ❤️ para la comunidad de desarrolladores para mejorar la productividad en la terminal, por:
+Genaro Coronel
 
 ---
 
-**¡Disfruta de Slotty y haz tu terminal más productiva! 🚀**
+**🚀 ¡Instala Slotty hoy y transforma tu experiencia en la terminal!**
