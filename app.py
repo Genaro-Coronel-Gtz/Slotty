@@ -45,6 +45,7 @@ def main():
             choices=commands,
             border=True,
             vi_mode=False,
+            instruction=""
         ).execute()
 
         if tmp_path:
@@ -54,6 +55,11 @@ def main():
                 else:
                     f.write("")
             
+
+            for _ in range(3):
+                sys.stdout.write("\033[A\033[K")
+            sys.stdout.flush()
+                
     except (KeyboardInterrupt, EOFError):
         if tmp_path and os.path.exists(tmp_path):
             with open(tmp_path, "w") as f: f.write("")
