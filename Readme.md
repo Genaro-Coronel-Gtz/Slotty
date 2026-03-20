@@ -1,18 +1,19 @@
-# 🚀 Slotty - Guía de Instalación y Uso
+# Slotty - Sistema de Gestión de Comandos
 
-## 📋 ¿Qué es Slotty?
+**Slotty** es un sistema de gestión de comandos con interfaz fuzzy search que te permite organizar, buscar y ejecutar comandos rápidamente desde tu terminal.
 
-Slotty es un sistema de gestión de comandos para terminal que te permite organizar y acceder rápidamente a tus comandos más utilizados a través de "slots" temáticos y una interfaz de búsqueda interactiva.
+## Características Principales
 
-## ✨ Características Principales
+- **Búsqueda Fuzzy** - Encuentra comandos al instante con InquirerPy
+- **Slots Temáticos** - Organiza comandos por categorías (git, docker, python, etc.)
+- **Acceso Rápido** - Configurable con atajos de teclado (F10)
+- **Paleta Propia** - 30 colores vibrantes exclusivos de Slotty
+- **Fácil Configuración** - Instalación automática sin dependencias
+- **Multiplataforma** - macOS, Linux, WSL2 con soporte completo
+- **Binario Nativo** - Ejecutable independiente sin requerir Python
+- **Sin Sudo** - Instalación 100% en directorio de usuario
 
-- 🎯 **Búsqueda Fuzzy** - Encuentra comandos al instante
-- 📁 **Slots Temáticos** - Organiza comandos por categorías (git, docker, etc.)
-- ⚡ **Acceso Rápido** - Configurable con atajos de teclado
-- 🎨 **Interfaz Amigable** - Colores y emojis para mejor experiencia
-- 🔧 **Fácil Configuración** - Instalación simple en minutos
-
-## 🛠️ Requisitos Previos
+## Requisitos Previos
 
 ### Sistema Operativo
 - **macOS** (10.15+) - Totalmente compatible
@@ -21,12 +22,9 @@ Slotty es un sistema de gestión de comandos para terminal que te permite organi
 
 ### Shell Requerido
 - **ZSH** (v5.0+) - Requerido (viene por defecto en macOS)
+- **Bash** - Compatible
 - **Oh My Zsh** - Opcional pero recomendado
 - **Powerlevel10k** - Compatible con configuración especial
-
-### Dependencias
-- **Python 3.8+**
-- **pip** (gestor de paquetes Python)
 
 ### Terminales Soportadas
 - **iTerm2** (macOS) - Recomendado, mejor soporte de atajos
@@ -36,46 +34,46 @@ Slotty es un sistema de gestión de comandos para terminal que te permite organi
 - **Alacritty** (multiplataforma) - Compatible
 - **WSL Terminal** (Windows) - Compatible
 
-## 📦 Instalación
+## Instalación
 
-### 1. Clonar el Repositorio
+### Opción 1: Instalación Automática (Recomendada)
 
 ```bash
+# Clonar el repositorio
 git clone https://github.com/tu-usuario/slotty.git
 cd slotty
+
+# Ejecutar instalador (sin requerir sudo)
+./install.sh
 ```
 
-### 2. Crear Entorno Virtual
+El instalador automáticamente:
+- Copia el binario a `~/.slotty/slotty`
+- Copia `slotty_core.sh` a `~/.slotty/`
+- Configura tu shell (`.zshrc` o `.bashrc`) para usar `~/.slotty/slotty_core.sh`
+- Crea slots de ejemplo en `~/.slotty/slots/`
+- **No requiere sudo** - Instalación 100% en directorio de usuario
+
+### Opción 2: Instalación Manual
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/slotty.git
+cd slotty
+
+# 2. Copiar binario y funciones a ~/.slotty
+mkdir -p ~/.slotty/slots
+cp dist/slotty ~/.slotty/slotty
+chmod +x ~/.slotty/slotty
+cp slotty_core.sh ~/.slotty/slotty_core.sh
+
+# 3. Configurar shell
+echo 'source ~/.slotty/slotty_core.sh' >> ~/.zshrc
+echo 'PROMPT="$(slotty_prompt_info)$PROMPT"' >> ~/.zshrc
+
+# 4. Recargar configuración
+source ~/.zshrc
 ```
-
-### 3. Configurar en ZSH
-
-Agrega esto al final de tu `~/.zshrc`:
-
-```bash
-# ==========================================
-# SLOTTY - CONFIGURACIÓN
-# ==========================================
-
-# Configuración de historial para ignorar comandos con espacio inicial
-setopt HIST_IGNORE_SPACE
-setopt HIST_NO_STORE
-setopt HIST_VERIFY
-
-# Cargar el sistema de slots
-source /ruta/a/slotty/slotty_core.sh
-
-# Inyectar el indicador en tu prompt
-PROMPT='$(slotty_prompt_info)'$PROMPT
-```
-
-> **Importante:** Reemplaza `/ruta/a/slotty/` con la ruta real donde clonaste el proyecto.  
-> Las opciones `HIST_IGNORE_SPACE` y `HIST_NO_STORE` evitan que ` slotty` se guarde en el historial.
 
 #### Para usuarios de Linux
 
@@ -95,19 +93,57 @@ chsh -s $(which zsh)
 
 Si usas **Oh My Zsh + Powerlevel10k**, la configuración de historial es **crucial** porque Powerlevel10k tiene su propio manejo de historial que ignora el truco del espacio inicial unless las opciones `HIST_IGNORE_SPACE` estén configuradas.
 
-### 4. Recargar Configuración
+## Atajo de Teclado (Opcional)
+
+### Para iTerm2 (macOS)
+
+1. **Abre iTerm2** → Settings (Cmd + ,)
+2. **Ve a** Profiles → Keys → Key Bindings
+3. **Haz clic en** + para añadir nuevo binding
+4. **Configura:**
+   - **Keyboard Shortcut:** F10
+   - **Action:** Send Text
+   - **Value:** `\x15 slotty\n`
+
+### Para Terminal.app (macOS Nativa)
+
+1. **Abre Terminal** → Preferences → Profiles → Keyboard
+2. **Haz clic en** + para añadir nuevo atajo
+3. **Configura:**
+   - **Keyboard Shortcut:** F10
+   - **Action:** Send Text
+   - **Value:** `^U slotty\n`
+
+### Para Terminales Linux (GNOME, KDE, etc.)
+
+1. **Abre Preferencias de Terminal**
+2. **Busca** Atajos de Teclado o Key Bindings
+3. **Añade nuevo atajo:**
+   - **Tecla:** F10
+   - **Comando:** `Ctrl+U` + ` slotty` + `Enter`
+
+### Compatibilidad con Powerlevel10k
+
+Si usas **Oh My Zsh + Powerlevel10k**, es **crucial** agregar estas opciones a tu `.zshrc`:
 
 ```bash
-source ~/.zshrc
+# Configuración de historial para Powerlevel10k
+setopt HIST_IGNORE_SPACE
+setopt HIST_NO_STORE
+setopt HIST_VERIFY
 ```
 
-### 5. Crear Slots de Ejemplo
+### Códigos de Tecla por Sistema
 
-```bash
-./create_slots.sh
-```
+| Sistema | Ctrl+U | Formato |
+|---------|---------|---------|
+| iTerm2 | `\x15` | Hexadecimal |
+| Terminal.app | `^U` | Caret notation |
+| Linux | `Ctrl+U` | Texto plano |
 
-## Uso Básico
+> **Nota:** En todos los casos, el espacio antes de `slotty` es intencional para evitar que se guarde en el historial (con `HIST_IGNORE_SPACE`).
+
+## 🚀 Uso Básico
 
 ### Activar Slots
 
@@ -119,6 +155,7 @@ plug git
 plug git,docker
 
 # Ver slots activos (se muestra en el prompt)
+echo $SLOTTY_ACTIVE
 ```
 
 ### Usar Slotty
@@ -131,6 +168,205 @@ slotty
 # Presiona Enter para ejecutarlo
 # Presiona ESC para cancelar
 ```
+
+### Comandos Avanzados
+
+```bash
+# Listar todos los slots disponibles
+slotty --list-slots
+
+# Agregar un comando a un slot
+slotty --add-command "docker run -it --rm ubuntu bash" --to docker
+
+# Eliminar comandos interactivamente
+slotty --delete
+```
+
+## 🏗️ Estructura de Archivos
+
+### Después de la Instalación
+
+```
+~/.slotty/
+├── slotty              # Binario ejecutable principal
+├── slotty_core.sh      # Funciones del shell
+└── slots/             # Directorio de comandos
+    ├── docker.txt       # Comandos Docker
+    ├── git.txt          # Comandos Git
+    └── python.txt       # Comandos Python
+```
+
+### Directorio del Proyecto
+
+```
+slotty/
+├── dist/slotty          # Binario compilado
+├── slotty_core.sh      # Funciones del shell
+├── install.sh         # Instalador automático
+├── uninstall.sh       # Desinstalador completo
+├── README.md          # Documentación principal
+├── DISTRIBUTION.md    # Guía para mantenedores
+├── requirements.txt    # Dependencias Python
+├── app.py            # Código fuente
+├── slotty.spec        # Configuración PyInstaller
+└── create_slots.sh    # Slots de ejemplo
+```
+
+## 🎯 Flujo de Trabajo Típico
+
+### 1. Configuración Inicial
+```bash
+# Instalar Slotty
+./install.sh
+
+# Recargar terminal
+source ~/.zshrc
+```
+
+### 2. Uso Diario
+```bash
+# Activar slots para tu proyecto actual
+plug git,docker,node
+
+# Activar slot uno a uno
+plug git
+
+# Abrir Slotty y seleccionar comando
+slotty
+
+# El comando aparece en tu terminal listo para ejecutar
+```
+
+### 3. Gestión de Comandos
+```bash
+# Agregar nuevos comandos
+slotty --add-command "npm run dev" --to node
+
+# Eliminar comandos que no usas
+slotty --delete
+
+# Listar todos tus slots
+slotty --list-slots
+```
+
+## 🔧 Solución de Problemas
+
+### Comandos No Aparecen
+```bash
+# Verifica que el slot esté activo
+echo $SLOTTY_ACTIVE
+
+# Lista los slots disponibles
+slotty --list-slots
+```
+
+### Error de "Comando no encontrado"
+```bash
+# Verifica que ~/.slotty esté en tu PATH
+echo $PATH | grep slotty
+
+# Verifica que el binario sea ejecutable
+ls -la ~/.slotty/slotty
+```
+
+### Atajo F10 No Funciona
+
+**Para iTerm2:**
+- Verifica Keyboard Shortcut en Settings → Keys → Key Bindings
+- Asegúrate que Action sea "Send Text"
+- Verifica que Value sea `\x15 slotty\n`
+
+**Para Terminal.app:**
+- Revisa Preferences → Profiles → Keyboard
+- Confirma que el atajo esté configurado correctamente
+
+### Problemas de Colores en el Prompt
+
+Si los colores no se ven correctamente:
+
+```bash
+# Verifica tu configuración de terminal
+echo $TERM
+
+# Recarga la configuración de Slotty
+source ~/.slotty/slotty_core.sh
+```
+
+### Error de Historial
+
+Si `slotty` aparece en el historial a pesar del espacio inicial:
+
+```bash
+# Verifica las opciones de historial en tu .zshrc
+grep -E "HIST_IGNORE|HIST_NO_STORE|HIST_VERIFY" ~/.zshrc
+
+# Agrega las opciones si no existen
+echo "setopt HIST_IGNORE_SPACE HIST_NO_STORE HIST_VERIFY" >> ~/.zshrc
+```
+
+## 🗑️ Desinstalación Completa
+
+Para desinstalar Slotty completamente sin dejar rastros:
+
+```bash
+# Ejecutar desinstalador
+./uninstall.sh
+
+# Recargar terminal
+source ~/.zshrc
+```
+
+El desinstalador:
+- ✅ Elimina el binario de `~/.slotty/slotty`
+- ✅ Remueve la configuración del shell
+- ✅ Crea backup de tu archivo de configuración
+- 🗂️ Opcional: elimina todos los datos de `~/.slotty`
+- 🚀 **No requiere sudo** - Todo en directorio de usuario
+
+## 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas!
+
+### Para Reportar Issues
+
+1. **Describe el problema** claramente
+2. **Incluye tu sistema** (macOS, Linux, terminal)
+3. **Proporciona logs** si hay errores
+4. **Sugerencias de mejora** son apreciadas
+
+### Para Enviar Pull Requests
+
+1. **Haz fork del proyecto**
+2. **Crea una feature branch**
+3. **Haz commit de cambios**
+4. **Push a tu fork**
+5. **Abre Pull Request**
+
+### Desarrollo Local
+
+```bash
+# Modificar app.py
+vim app.py
+
+# Regenerar binario
+source venv/bin/activate
+pyinstaller --onefile --name slotty app.py
+
+# Probar cambios
+~/.slotty/slotty --help
+```
+
+## 📄 Licencia
+
+MIT License - Libre para uso personal y comercial
+
+## 👥 Créditos
+
+Creado con ❤️ por la comunidad de desarrolladores para mejorar la productividad en la terminal.
+
+---
+
+**🚀 ¡Instala Slotty hoy y transforma tu experiencia en la terminal!**
 
 ## 📚 Comandos Completos
 

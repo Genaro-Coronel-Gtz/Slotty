@@ -1,6 +1,5 @@
 Roadmap
 
-[ ] Agregar temas, mediante archivos dentro de una carpeta themes
 [ ] Salir con Escape
 [ ] Lanzar atajo nativo
 [ ] Genear binario

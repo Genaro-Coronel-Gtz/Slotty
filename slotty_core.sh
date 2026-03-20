@@ -1,20 +1,23 @@
 #!/bin/zsh
 
-# --- Configuración de Rutas ---
-SLOTTY_PATH="/Users/genaro_coronel/Lab/Slotty"
-SLOTTY_PY="$SLOTTY_PATH/app.py"
-VENV_PYTHON="/Users/genaro_coronel/Lab/Slotty/venv/bin/python3"
+# ==========================================
+# SLOTTY - CONFIGURACIÓN
+# ==========================================
+
+# Rutas del proyecto (ahora todo en ~/.slotty/)
+SLOTTY_DIR="$HOME/.slotty"
+SLOTTY_PY="$SLOTTY_DIR/slotty"
 
 # 1. Función Principal (Buscador y gestor de argumentos)
 function slotty() {
-    # Si hay argumentos, pasarlos al script Python
+    # Si hay argumentos, pasarlos al binario
     if [[ $# -gt 0 ]]; then
         # Para comandos que necesitan interfaz interactiva (--delete), usar script
         if [[ "$1" == "--delete" ]]; then
             export SLOTTY_ACTIVE="$SLOTTY_ACTIVE"
-            script -q /dev/null "$VENV_PYTHON" "$SLOTTY_PY" --delete
+            script -q /dev/null "$SLOTTY_PY" --delete
         else
-            $VENV_PYTHON "$SLOTTY_PY" "$@"
+            "$SLOTTY_PY" "$@"
         fi
         return $?
     fi
@@ -29,10 +32,10 @@ function slotty() {
     # Crear archivo temporal
     export SLOTTY_TMP_FILE=$(mktemp)
     
-    # Ejecutar Python con script para evitar problemas de TTY
+    # Ejecutar binario con script para evitar problemas de TTY
     export SLOTTY_ACTIVE="$SLOTTY_ACTIVE"
     export SLOTTY_TMP_FILE="$SLOTTY_TMP_FILE"
-    script -q /dev/null "$VENV_PYTHON" "$SLOTTY_PY"
+    script -q /dev/null "$SLOTTY_PY"
     
     # Procesar el resultado
     if [[ -f "$SLOTTY_TMP_FILE" ]]; then
