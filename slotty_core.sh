@@ -3,24 +3,38 @@
 # --- Configuración de Rutas ---
 SLOTTY_PATH="/Users/genaro_coronel/Lab/Slotty"
 SLOTTY_PY="$SLOTTY_PATH/app.py"
+VENV_PYTHON="/Users/genaro_coronel/Lab/Slotty/venv/bin/python3"
 
-# 1. Función Principal (Buscador)
+# 1. Función Principal (Buscador y gestor de argumentos)
 function slotty() {
-    # 1. Validación de slots activos
+    # Si hay argumentos, pasarlos al script Python
+    if [[ $# -gt 0 ]]; then
+        # Para comandos que necesitan interfaz interactiva (--delete), usar script
+        if [[ "$1" == "--delete" ]]; then
+            export SLOTTY_ACTIVE="$SLOTTY_ACTIVE"
+            script -q /dev/null "$VENV_PYTHON" "$SLOTTY_PY" --delete
+        else
+            $VENV_PYTHON "$SLOTTY_PY" "$@"
+        fi
+        return $?
+    fi
+    
+    # Modo normal: validación de slots activos
     if [[ -z "$SLOTTY_ACTIVE" ]]; then
         echo "⚠️  No hay slots activos. Usa 'plug <nombre>' primero."
         echo "💡 Slots disponibles: $(ls ~/.slotty/slots/ | sed 's/\.txt//g' | tr '\n' ' ')"
         return 1
     fi
 
-    # 2. Crear archivo temporal
+    # Crear archivo temporal
     export SLOTTY_TMP_FILE=$(mktemp)
-    local VENV_PYTHON="/Users/genaro_coronel/Lab/Slotty/venv/bin/python3"
     
-    # 3. Ejecutar Python (Él se encarga de limpiar su rastro con \033[A\033[K)
-    SLOTTY_TMP_FILE=$SLOTTY_TMP_FILE $VENV_PYTHON "$SLOTTY_PY"
+    # Ejecutar Python con script para evitar problemas de TTY
+    export SLOTTY_ACTIVE="$SLOTTY_ACTIVE"
+    export SLOTTY_TMP_FILE="$SLOTTY_TMP_FILE"
+    script -q /dev/null "$VENV_PYTHON" "$SLOTTY_PY"
     
-    # 4. Procesar el resultado
+    # Procesar el resultado
     if [[ -f "$SLOTTY_TMP_FILE" ]]; then
         local selected_cmd=$(cat "$SLOTTY_TMP_FILE")
         
@@ -32,8 +46,7 @@ function slotty() {
             # 'print -z' pone el comando en el buffer
             print -z "$selected_cmd"
             
-            # OPCIONAL: Este comando obliga a Zsh a redibujar el prompt 
-            # para que el comando aparezca al instante sin parpadeos.
+            # Redibujar el prompt para que aparezca al instante
             zle && zle redisplay
         fi
     fi
