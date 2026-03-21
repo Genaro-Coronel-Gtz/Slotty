@@ -47,6 +47,17 @@ rm -rf dist/
 echo "🏗️ Construyendo binario..."
 pyinstaller slotty.spec
 
+# Esperar a que el binario esté disponible (verificación activa)
+echo "⏳ Esperando a que termine la construcción..."
+timeout=30
+count=0
+while [[ ! -f "dist/slotty" ]] && [[ $count -lt $timeout ]]; do
+    sleep 1
+    count=$((count + 1))
+    echo -n "."
+done
+echo ""
+
 # Verificar si se creó el binario
 if [[ ! -f "dist/slotty" ]]; then
     echo "❌ Error: No se pudo crear el binario"
@@ -56,6 +67,25 @@ fi
 
 # Hacer binario ejecutable
 chmod +x dist/slotty
+
+# Crear archivo tar.gz
+crear_tar_gz() {
+    echo "📦 Creando archivo tar.gz..."
+    if [[ -d "dist/slotty" ]]; then
+        cd dist/
+        tar -czf slotty.tar.gz slotty/
+        echo "✅ Archivo tar.gz creado: dist/slotty.tar.gz"
+        echo "📊 Tamaño del paquete:"
+        ls -lh slotty.tar.gz
+        cd ..
+    else
+        echo "❌ Error: No se encontró el directorio dist/slotty"
+        exit 1
+    fi
+}
+
+# Llamar a la función
+crear_tar_gz
 
 # Mostrar información del binario
 echo ""

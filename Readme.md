@@ -228,6 +228,47 @@ unplug <nombre>
 unplug
 ```
 
+## 🌱 Script seed_slots.sh
+
+### Propósito
+
+El script `seed_slots.sh` es una utilidad que crea automáticamente slots preconfigurados con los comandos más populares para diferentes tecnologías y frameworks. Esto permite tener una base sólida de comandos listos para usar sin necesidad de agregarlos manualmente.
+
+### Funcionalidad
+
+El script crea cuatro slots temáticos en `~/.slotty/slots/`:
+
+- **python.txt** - 20 comandos esenciales de Python y pip
+- **docker.txt** - 20 comandos fundamentales de Docker y docker-compose  
+- **laravel.txt** - 20 comandos populares del framework Laravel
+- **rails.txt** - 20 comandos principales de Ruby on Rails
+
+### Ejecución
+
+```bash
+# Ejecutar el script para crear los slots
+./seed_slots.sh
+```
+
+### Slots Creados
+
+#### Python
+Incluye comandos para gestión de entornos virtuales, instalación de paquetes, servidores de desarrollo, frameworks (Flask, Django, FastAPI), testing y depuración.
+
+#### Docker  
+Contiene comandos para gestión de contenedores e imágenes, docker-compose, logs, inspección y limpieza de recursos.
+
+#### Laravel
+Cubre comandos artisan para desarrollo Laravel: servidor, migraciones, seeds, consola interactiva, generación de código y gestión de caché.
+
+#### Rails
+Incluye comandos Rails para servidor, consola, generación de scaffolds, migraciones, tests y gestión de assets.
+
+### Resultado
+
+Después de ejecutar el script, tendrás acceso inmediato a 80 comandos organizados por categorías, listos para ser buscados y ejecutados con Slotty.
+
+
 ## 🔧 Solución de Problemas
 
 ### Comandos No Aparecen
