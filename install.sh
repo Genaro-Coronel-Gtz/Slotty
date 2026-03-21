@@ -42,46 +42,6 @@ else
     exit 1
 fi
 
-# Crear directorio de slots
-mkdir -p ~/.slotty/slots
-
-# Crear slots de ejemplo si no existen
-if [[ ! -f ~/.slotty/slots/docker.txt ]] && [[ ! -f ~/.slotty/slots/git.txt ]]; then
-    echo "📝 Creando slots de ejemplo..."
-    
-    # Slot Docker
-    cat > ~/.slotty/slots/docker.txt << 'EOF'
-docker ps -a | grep -v 'Up' | awk '{print $1}' | xargs docker rm
-docker images -f "dangling=true" -q | xargs docker rmi
-docker-compose up -d
-docker-compose down
-docker logs -f
-docker exec -it $(docker ps -q --latest) /bin/bash
-docker build -t myapp .
-docker run -it --rm myapp
-docker system prune -f
-EOF
-
-    # Slot Git
-    cat > ~/.slotty/slots/git.txt << 'EOF'
-git status
-git add .
-git commit -m "update"
-git push origin main
-git pull origin main
-git log --oneline -10
-git diff --staged
-git stash
-git checkout -b feature/new-branch
-git merge feature/new-branch
-git rebase main
-EOF
-
-    echo "✅ Slots de ejemplo creados"
-fi
-
-# ... (todo tu código anterior de copiado de archivos)
-
 # Detectar archivo de configuración según el shell
 if [[ "$SHELL" == *"zsh"* ]]; then
     CONFIG_FILE="$HOME/.zshrc"

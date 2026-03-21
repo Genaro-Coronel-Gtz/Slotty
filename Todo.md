@@ -1,19 +1,12 @@
-Roadmap
+## Roadmap
 
-[ ] Salir con Escape
-[ ] Lanzar atajo nativo
-[ ] Genear binario
-[ ] Crear Instalador
+[*] Generar mas comandos
+[*] Genear binario
+[ ] Fix Builder (Indica que falla la generacion del binario, pero no es asi)
+[ ] Modificar slotty.spec para generar tar.gz
+[ ] Crear Installer con targ.gz
 [ ] No guardar Historial
-[ ] Generar mas comandos
-
-Se hizo lo del lazy loading en app.py
-Se actualizo slotty.spec para que no compile en un solo archivo
-
-todos
-agregar al gitingore el dist
-comprimir el release , y ver como sera la nueva forma del installer 
-en el install.sh 
-
-quizas sea un script totalmente nuevo que baje el tar de github 
-osea subir un release
+[ ] Salir con Escape
+[ ] Lanzar atajo programaticamente
+[ ] Agregar a Readme.md banner
+[ ] Agregar a Readme.md documentacion sobre seed_slots.sh

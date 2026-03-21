@@ -15,6 +15,11 @@
 - **Multiplataforma** - macOS, Linux, WSL2 con soporte completo
 - **Binario Nativo** - Ejecutable independiente sin requerir Python
 - **Sin Sudo** - Instalación 100% en directorio de usuario
+- **Indicador en el prompt** - Muestra los slots activos:
+
+```
+[ git | docker] $ 
+```
 
 ## Requisitos Previos
 
@@ -48,6 +53,8 @@ cd slotty
 
 # Ejecutar instalador (sin requerir sudo)
 ./install.sh
+
+source ~/.zshrc
 ```
 
 El instalador automáticamente:
@@ -146,44 +153,6 @@ setopt HIST_VERIFY
 
 > **Nota:** En todos los casos, el espacio antes de `slotty` es intencional para evitar que se guarde en el historial (con `HIST_IGNORE_SPACE`).
 
-## 🚀 Uso Básico
-
-### Activar Slots
-
-```bash
-# Activar un slot específico
-plug git
-
-# Activar múltiples slots
-plug git,docker
-
-# Ver slots activos (se muestra en el prompt)
-echo $SLOTTY_ACTIVE
-```
-
-### Usar Slotty
-
-```bash
-# Abrir buscador de comandos
-slotty
-
-# Busca y selecciona un comando con las flechas
-# Presiona Enter para ejecutarlo
-# Presiona ESC para cancelar
-```
-
-### Comandos Avanzados
-
-```bash
-# Listar todos los slots disponibles
-slotty --list-slots
-
-# Agregar un comando a un slot
-slotty --add-command "docker run -it --rm ubuntu bash" --to docker
-
-# Eliminar comandos interactivamente
-slotty --delete
-```
 
 ## 🏗️ Estructura de Archivos
 
@@ -215,41 +184,48 @@ slotty/
 └── create_slots.sh    # Slots de ejemplo
 ```
 
-## 🎯 Flujo de Trabajo Típico
+## 📚 Comandos Completos
 
-### 1. Configuración Inicial
+### 1. Búsqueda Normal
 ```bash
-# Instalar Slotty
-./install.sh
-
-# Recargar terminal
-source ~/.zshrc
-```
-
-### 2. Uso Diario
-```bash
-# Activar slots para tu proyecto actual
-plug git,docker,node
-
-# Activar slot uno a uno
-plug git
-
-# Abrir Slotty y seleccionar comando
 slotty
+```
+Abre la interfaz fuzzy para buscar y ejecutar comandos.
 
-# El comando aparece en tu terminal listo para ejecutar
+### 2. Listar Slots Disponibles
+```bash
+slotty --list-slots
+```
+Muestra todos los slots con su número de comandos.
+
+### 3. Agregar Comandos
+```bash
+slotty --add-command "<comando> | <descripción>" --to <slot>
 ```
 
-### 3. Gestión de Comandos
+**Ejemplos:**
 ```bash
-# Agregar nuevos comandos
-slotty --add-command "npm run dev" --to node
+slotty --add-command "git status | Ver estado del repositorio" --to git
+slotty --add-command "docker ps -a | Listar todos los contenedores" --to docker
+slotty --add-command "npm run build | Compilar proyecto" --to node
+```
 
-# Eliminar comandos que no usas
+### 4. Eliminar Comandos
+```bash
 slotty --delete
+```
+Abre una interfaz para seleccionar y eliminar comandos con confirmación.
 
-# Listar todos tus slots
-slotty --list-slots
+### 5. Gestión de Slots
+```bash
+# Activar slot
+plug <nombre>
+
+# Desactivar slot específico
+unplug <nombre>
+
+# Desactivar todos los slots
+unplug
 ```
 
 ## 🔧 Solución de Problemas
@@ -357,8 +333,7 @@ El desinstalador:
 vim app.py
 
 # Regenerar binario
-source venv/bin/activate
-pyinstaller --onefile --name slotty app.py
+./build.sh
 
 # Probar cambios
 ~/.slotty/slotty --help
@@ -370,230 +345,10 @@ MIT License - Libre para uso personal y comercial
 
 ## 👥 Créditos
 
-Creado con ❤️ para la comunidad de desarrolladores para mejorar la productividad en la terminal, por:
-Genaro Coronel
+Creado con ❤️ para la comunidad de desarrolladores con el objetivo de mejorar la productividad en la terminal
+Desarrollado por Genaro Coronel
 ---
 
-**🚀 ¡Instala Slotty hoy y transforma tu experiencia en la terminal!**
 
-## 📚 Comandos Completos
 
-### 1. Búsqueda Normal
-```bash
-slotty
-```
-Abre la interfaz fuzzy para buscar y ejecutar comandos.
 
-### 2. Listar Slots Disponibles
-```bash
-slotty --list-slots
-```
-Muestra todos los slots con su número de comandos.
-
-### 3. Agregar Comandos
-```bash
-slotty --add-command "<comando> | <descripción>" --to <slot>
-```
-
-**Ejemplos:**
-```bash
-slotty --add-command "git status | Ver estado del repositorio" --to git
-slotty --add-command "docker ps -a | Listar todos los contenedores" --to docker
-slotty --add-command "npm run build | Compilar proyecto" --to node
-```
-
-### 4. Eliminar Comandos
-```bash
-slotty --delete
-```
-Abre una interfaz para seleccionar y eliminar comandos con confirmación.
-
-### 5. Gestión de Slots
-```bash
-# Activar slot
-plug <nombre>
-
-# Desactivar slot específico
-unplug <nombre>
-
-# Desactivar todos los slots
-unplug
-```
-
-## 🏗️ Estructura de Archivos
-
-```
-slotty/
-├── slotty_core.sh      # Funciones principales del shell
-├── app.py              # Interfaz Python con InquirerPy
-├── requirements.txt    # Dependencias Python
-├── create_slots.sh    # Script para slots de ejemplo
-└── ~/.slotty/slots/    # Directorio con archivos .txt de cada slot
-```
-
-## 💡 Ejemplos de Uso
-
-### Flujo de Trabajo Típico
-
-```bash
-# 1. Ver qué slots tienes disponibles
-slotty --list-slots
-
-# 2. Activar el slot que necesitas
-plug git
-
-# 3. Agregar comandos personalizados
-slotty --add-command "git log --oneline -10 | Ver últimos commits" --to git
-
-# 4. Usar Slotty para buscar y ejecutar comandos
-slotty
-
-# 5. Cuando termines, desactiva el slot
-unplug git
-```
-
-### Comandos Útiles
-
-```bash
-# Ver todos tus comandos de git
-plug git && slotty
-
-# Agregar rápidamente un nuevo comando
-slotty --add-command "kubectl get pods | Ver pods de Kubernetes" --to k8s
-
-# Limpiar slots que no usas
-slotty --delete
-```
-
-## 🎨 Personalización
-
-### Crear Nuevos Slots
-
-```bash
-# Crear un archivo para tu slot
-mkdir -p ~/.slotty/slots
-touch ~/.slotty/slots/mi-slot.txt
-
-# Agregar comandos (formato: comando | descripción)
-echo "ls -la | Listar archivos detallados" >> ~/.slotty/slots/mi-slot.txt
-echo "df -h | Ver espacio en disco" >> ~/.slotty/slots/mi-slot.txt
-
-# Activar y usar
-plug mi-slot
-slotty
-```
-
-### Indicador en el Prompt
-
-El prompt mostrará los slots activos:
-```
-[🔌 git | docker] $ 
-```
-
-## 🔧 Solución de Problemas
-
-### Problemas Comunes
-
-#### Comandos No Aparecen
-```bash
-# Verifica que el slot esté activo
-echo $SLOTTY_ACTIVE
-
-# Lista los slots disponibles
-slotty --list-slots
-```
-
-#### Error de Python
-```bash
-# Verifica el entorno virtual
-source venv/bin/activate
-python3 --version
-
-# Reinstalar dependencias
-pip install -r requirements.txt
-```
-
-#### Atajo F10 No Funciona
-
-**Para iTerm2:**
-- Verifica Keyboard Shortcut en Settings → Keys → Key Bindings
-- Prueba con otra tecla (F9, F11)
-- Asegúrate de que Action sea "Send Text"
-
-**Para Terminal.app:**
-- Revisa Preferences → Profiles → Keyboard
-- Usa `^U slotty\n` en lugar de `\x15 slotty\n`
-
-**Para Linux:**
-- Verifica que la terminal soporte atajos personalizados
-- Prueba con Ctrl+Alt+F10 si F10 no funciona
-
-#### Problemas con Powerlevel10k
-
-Si usas Powerlevel10k y los comandos siguen apareciendo en el historial:
-
-```bash
-# Verifica que las opciones estén configuradas
-grep -E "HIST_IGNORE|HIST_NO_STORE|HIST_VERIFY" ~/.zshrc
-
-# Si no aparecen, agrégalas manualmente
-echo "setopt HIST_IGNORE_SPACE HIST_NO_STORE HIST_VERIFY" >> ~/.zshrc
-source ~/.zshrc
-```
-
-#### Problemas Específicos de Linux
-
-**ZSH no encontrado:**
-```bash
-# Instalar ZSH en Ubuntu/Debian
-sudo apt update && sudo apt install zsh
-
-# Instalar ZSH en Fedora
-sudo dnf install zsh
-
-# Instalar ZSH en Arch
-sudo pacman -S zsh
-```
-
-**Permisos de ejecución:**
-```bash
-# Hacer ejecutable el script
-chmod +x slotty_core.sh
-chmod +x create_slots.sh
-```
-
-#### Problemas de Rutas
-
-**Error "source: command not found":**
-```bash
-# Usa ruta absoluta en .zshrc
-source /home/tu-usuario/slotty/slotty_core.sh
-
-# O añade al PATH
-export PATH="$PATH:/ruta/a/slotty"
-```
-
-#### Errores de TTY/Interfaz
-
-Si la interfaz fuzzy no funciona:
-
-```bash
-# Verifica que estés en una terminal interactiva
-echo $-
-
-# Debe mostrar 'i' entre las opciones
-# Si no, prueba en una terminal normal
-```
-
-## 📄 Licencia
-
-MIT License - Libre para uso personal y comercial
-
-## 👥 Créditos
-
-Creado con ❤️ para la comunidad de desarrolladores para mejorar la productividad en la terminal, por:
-Genaro Coronel
-
----
-
-**🚀 ¡Instala Slotty hoy y transforma tu experiencia en la terminal!**
