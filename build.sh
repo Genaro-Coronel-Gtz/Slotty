@@ -34,27 +34,23 @@ fi
 # Instalar dependencias si es necesario
 pip install -r requirements.txt
 
-# Verificar PyInstaller
-echo "🔍 Verificando PyInstaller..."
-if ! command -v pyinstaller &> /dev/null; then
-    echo "❌ Error: PyInstaller no está instalado"
-    echo "💡 Instalando PyInstaller..."
-    pip install pyinstaller
-fi
+# Actualizar pip e instalar PyInstaller específico
+echo "⬆️ Actualizando pip e instalando PyInstaller..."
+pip install pyinstaller==6.19.0
 
 # Limpiar builds anteriores
 echo "🧹 Limpiando builds anteriores..."
 rm -rf build/
 rm -rf dist/
 
-# Construir binario
+# Construir binario usando el .spec actualizado
 echo "🏗️ Construyendo binario..."
-pyinstaller --onefile --name slotty app.py
+pyinstaller slotty.spec
 
 # Verificar si se creó el binario
 if [[ ! -f "dist/slotty" ]]; then
     echo "❌ Error: No se pudo crear el binario"
-    echo "💡 Revisa los errores arriba para más detalles"
+    echo "💡 Revisa los mensajes de error arriba para más detalles"
     exit 1
 fi
 
@@ -65,11 +61,11 @@ chmod +x dist/slotty
 echo ""
 echo "✅ ¡Binario creado exitosamente!"
 echo ""
-echo "📦 Información del binario:"
+echo "� Información del binario:"
 ls -lh dist/slotty
 echo ""
-echo "🚀 Para probar:"
+echo "🧪 Para probar:"
 echo "   ./dist/slotty --help"
 echo ""
-echo "📋 Para instalar:"
+echo "� Para instalar:"
 echo "   ./install.sh"

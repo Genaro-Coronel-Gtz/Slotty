@@ -1,74 +1,68 @@
 #!/bin/bash
 
 # ==========================================
-# SLOTTY - DESINSTALADOR
+# SLOTTY - DESINSTALADOR (macOS/Linux)
 # ==========================================
 
-echo "🗑️ Desinstalando Slotty..."
+echo "🗑️  Desinstalando Slotty..."
 
-# Eliminar binario del directorio del usuario
-echo "📦 Eliminando binario..."
-if rm -f ~/.slotty/slotty; then
-    echo "✅ Binario eliminado de ~/.slotty/"
-else
-    echo "❌ Error al eliminar binario de ~/.slotty/"
-fi
-
-# Eliminar configuración del shell
-echo "🔧 Eliminando configuración del shell..."
-
-if [[ -f "$HOME/.zshrc" ]]; then
-    if grep -q "slotty_core.sh" "$HOME/.zshrc"; then
-        echo "📝 Eliminando configuración de ZSH..."
-        # Crear backup
-        cp "$HOME/.zshrc" "$HOME/.zshrc.backup"
-        
-        # Eliminar líneas de Slotty
-        sed -i '' '/# SLOTTY - CONFIGURACIÓN/,/PROMPT.*slotty_prompt_info/d' "$HOME/.zshrc"
-        sed -i '' '/source.*slotty_core.sh/d' "$HOME/.zshrc"
-        
-        echo "✅ Configuración eliminada de .zshrc"
-        echo "💡 Backup creado en .zshrc.backup"
+# 1. Función para limpiar el archivo de configuración
+clean_config() {
+    local FILE=$1
+    if [[ -f "$FILE" ]]; then
+        if grep -q "SLOTTY - CONFIGURACIÓN" "$FILE"; then
+            echo "📝 Limpiando configuración en $(basename "$FILE")..."
+            
+            # Crear backup de seguridad
+            cp "$FILE" "${FILE}.slotty_bak"
+            
+            # macOS sed requiere un manejo especial para borrar bloques.
+            # Esta versión borra todo entre los delimitadores que pusimos en el installer.
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                # Versión macOS (BSD sed)
+                sed -i '' '/# SLOTTY - CONFIGURACIÓN/,/# =========================================/d' "$FILE"
+            else
+                # Versión Linux (GNU sed)
+                sed -i '/# SLOTTY - CONFIGURACIÓN/,/# =========================================/d' "$FILE"
+            fi
+            
+            echo "✅ Configuración eliminada de $(basename "$FILE")"
+            echo "💡 Backup creado en $(basename "$FILE").slotty_bak"
+        fi
     fi
-fi
+}
 
-if [[ -f "$HOME/.bashrc" ]]; then
-    if grep -q "slotty_core.sh" "$HOME/.bashrc"; then
-        echo "📝 Eliminando configuración de Bash..."
-        # Crear backup
-        cp "$HOME/.bashrc" "$HOME/.bashrc.backup"
-        
-        # Eliminar líneas de Slotty
-        sed -i '/# SLOTTY - CONFIGURACIÓN/,/PROMPT.*slotty_prompt_info/d' "$HOME/.bashrc"
-        sed -i '/source.*slotty_core.sh/d' "$HOME/.bashrc"
-        
-        echo "✅ Configuración eliminada de .bashrc"
-        echo "💡 Backup creado en .bashrc.backup"
-    fi
-fi
+# 2. Ejecutar limpieza en los archivos comunes
+clean_config "$HOME/.zshrc"
+clean_config "$HOME/.bashrc"
 
-# Preguntar si eliminar datos de usuario
+# 3. Manejo de la carpeta ~/.slotty y el binario
 echo ""
-read -p "🗂️ ¿Eliminar también los datos de Slotty (~/.slotty)? [y/N]: " -n 1 -r
+read -p "🗂️  ¿Deseas eliminar COMPLETAMENTE la carpeta ~/.slotty (incluye slots y comandos)? [y/N]: " -n 1 -r
 echo
-
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "🗂️ Eliminando datos de usuario..."
-    rm -rf ~/.slotty
-    echo "✅ Datos eliminados (incluyendo slotty_core.sh)"
+    if [ -d "$HOME/.slotty" ]; then
+        rm -rf "$HOME/.slotty"
+        echo "✅ Carpeta ~/.slotty eliminada permanentemente."
+    else
+        echo "ℹ️  La carpeta ~/.slotty ya no existía."
+    fi
 else
-    echo "📂 Datos conservados en ~/.slotty"
-    echo "💡 Se conservó slotty_core.sh en ~/.slotty/"
+    # Si decide no borrar todo, al menos quitamos el binario para que no ocupe espacio
+    echo "📂 Conservando carpeta ~/.slotty (tus slots están a salvo)."
+    if [ -f "$HOME/.slotty/slotty" ]; then
+        rm "$HOME/.slotty/slotty"
+        echo "✅ Binario eliminado de ~/.slotty/slotty para ahorrar espacio."
+    fi
+    echo "💡 Nota: Se conservan tus archivos .txt en ~/.slotty/slots/"
 fi
 
 echo ""
-echo "🎉 Slotty desinstalado completamente!"
+echo "🎉 ¡Slotty ha sido desinstalado!"
+echo "🔄 IMPORTANTE: Para que los cambios surtan efecto en esta sesión, ejecuta:"
+echo "   source ~/.zshrc  # (o tu archivo de configuración)"
 echo ""
-echo "🔄 Recarga tu terminal para aplicar los cambios:"
-echo "   source ~/.zshrc  # o ~/.bashrc"
-echo ""
-echo "📋 Resumen de la desinstalación:"
-echo "✅ Eliminado binario de ~/.slotty/slotty"
-echo "✅ Removida configuración del shell"
-echo "✅ Creado backup de configuración"
-echo "🚀 No se requirió sudo - Todo en directorio de usuario"
+echo "Resumen:"
+echo "✅ Hooks de shell eliminados."
+echo "✅ Binario removido."
+echo "✅ Backups creados con extensión .slotty_bak"

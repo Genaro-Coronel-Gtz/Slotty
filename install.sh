@@ -80,46 +80,48 @@ EOF
     echo "✅ Slots de ejemplo creados"
 fi
 
-# Detectar shell y configurar automáticamente
-echo "🔧 Configurando shell..."
+# ... (todo tu código anterior de copiado de archivos)
 
+# Detectar archivo de configuración según el shell
 if [[ "$SHELL" == *"zsh"* ]]; then
     CONFIG_FILE="$HOME/.zshrc"
-    SHELL_NAME="ZSH"
+    # En ZSH es mejor usar 'precmd' o expansión de variables para el prompt
+    PROMPT_LINE='PROMPT='\''$(slotty_prompt_info)'\''$PROMPT'
 elif [[ "$SHELL" == *"bash"* ]]; then
     CONFIG_FILE="$HOME/.bashrc"
-    SHELL_NAME="Bash"
+    PROMPT_LINE='PS1="$(slotty_prompt_info)$PS1"'
 else
-    echo "⚠️ Shell no soportado: $SHELL"
-    echo "💡 Slotty funciona mejor con ZSH o Bash"
-    echo "📝 Añade manualmente a tu archivo de configuración:"
-    echo "   source ~/.slotty/slotty_core.sh"
-    exit 1
+    # Fallback si no detecta bien el SHELL
+    CONFIG_FILE="$HOME/.zshrc" 
+    PROMPT_LINE='PROMPT='\''$(slotty_prompt_info)'\''$PROMPT'
 fi
 
-# Verificar si Slotty ya está configurado
-if grep -q "slotty_core.sh" "$CONFIG_FILE" 2>/dev/null; then
-    echo "⚠️ Slotty ya está configurado en $CONFIG_FILE"
-    echo "💡 Omitiendo configuración del shell"
+# Verificar si Slotty ya está configurado para evitar duplicados
+if grep -q "SLOTTY - CONFIGURACIÓN" "$CONFIG_FILE" 2>/dev/null; then
+    echo "⚠️  Slotty ya parece estar configurado en $CONFIG_FILE"
 else
-    # Añadir configuración al shell (apuntando a ~/.slotty/)
-    echo "" >> "$CONFIG_FILE"
-    echo "# =========================================" >> "$CONFIG_FILE"
-    echo "# SLOTTY - CONFIGURACIÓN" >> "$CONFIG_FILE"
-    echo "# =========================================" >> "$CONFIG_FILE"
-    echo "source ~/.slotty/slotty_core.sh" >> "$CONFIG_FILE"
-    echo 'PROMPT="$(slotty_prompt_info)$PROMPT"' >> "$CONFIG_FILE"
+    echo "🔧 Añadiendo configuración a $CONFIG_FILE..."
     
-    echo "✅ Configuración añadida a $CONFIG_FILE"
-    echo "🔄 Ejecuta: source $CONFIG_FILE"
+    # Usamos un bloque cat para insertar todo de una vez limpiamente
+    cat >> "$CONFIG_FILE" << EOF
+
+# =========================================
+# SLOTTY - CONFIGURACIÓN
+# =========================================
+# Carga las funciones principales (plug, slotty, etc.)
+if [ -f ~/.slotty/slotty_core.sh ]; then
+    source ~/.slotty/slotty_core.sh
+    # Agrega el indicador de slots activos al inicio del prompt
+    $PROMPT_LINE
+fi
+# =========================================
+EOF
+
+    echo "✅ Configuración añadida exitosamente."
 fi
 
+# Intentar recargar el shell actual para el usuario
 echo ""
 echo "🎉 ¡Slotty instalado exitosamente!"
-echo ""
-echo "📖 Prueba rápida:"
-echo "   plug git,docker  # Activar slots"
-echo "   slotty         # Abrir buscador"
-echo ""
-echo "📚 Todo instalado en ~/.slotty/ - Sin requerir sudo"
-echo "📚 Más información en README.md"
+echo "🔄 Para empezar a usarlo ahora mismo, ejecuta:"
+echo "   source $CONFIG_FILE"
