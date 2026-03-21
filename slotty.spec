@@ -13,9 +13,9 @@ a = Analysis(
         'rich.logging'
     ],
     hookspath=[],
-    hooksconfig={},
+    hooksconfig=[],
     runtime_hooks=[],
-    excludes=['tkinter', 'matplotlib', 'numpy'], # Solo lo que realmente no usas
+    excludes=['tkinter', 'matplotlib', 'numpy'],
     noarchive=False,
 )
 
@@ -24,17 +24,27 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    [],
+    [],             # <-- IMPORTANTE: Vaciamos esto
+    exclude_binaries=True, # <-- AGREGAMOS ESTO: Evita que meta todo en el .exe
     name='slotty',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,  # IMPORTANTE: No activar en Mac con Python 3.11
+    strip=False,
     upx=True,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None, 
+)
+
+# ESTE BLOQUE ES EL QUE CREA LA CARPETA CON LAS LIBRERÍAS AL LADO
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='slotty' # Nombre de la carpeta final en dist/
 )
