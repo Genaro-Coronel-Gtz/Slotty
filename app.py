@@ -48,8 +48,53 @@ def clear_slotty_from_history():
             # Si falla, no hacer nada para no interrumpir el flujo
             pass
 
+def list_slots():
+    """Lista los slots disponibles con lazy loading"""
+    from rich.console import Console  # Import local
+    
+    console = Console()
+    slots = []
+    
+    if not os.path.exists(SLOTS_DIR):
+        console.print(" No hay slots creados aún.", style="red")
+        return
+    
+    console.print("Slots disponibles:", style="bold blue")
+    for filename in os.listdir(SLOTS_DIR):
+        if filename.endswith(".txt"):
+            slot_name = filename[:-4]
+            filepath = os.path.join(SLOTS_DIR, filename)
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                count = sum(1 for line in f if "|" in line)
+            slots.append((slot_name, count))
+    
+    for slot_name, count in sorted(slots):
+        console.print(f"  • {slot_name} ({count} comandos)", style="green")
+
+def add_command(command, slot):
+    """Agrega un comando a un slot específico con lazy loading"""
+    from rich.console import Console  # Import local
+    
+    console = Console()
+    if "|" not in command:
+        console.print(" Error: El comando debe tener el formato 'comando | descripción'", style="red")
+        return
+    
+    if not slot:
+        console.print(" Error: Debes especificar un slot con --to", style="red")
+        return
+    
+    slot_file = os.path.join(SLOTS_DIR, f"{slot}.txt")
+    os.makedirs(SLOTS_DIR, exist_ok=True)
+    
+    with open(slot_file, "a", encoding="utf-8") as f:
+        f.write(f"\n{command}")
+    
+    console.print(f" ✅ Comando agregado a '{slot}'", style="green")
+
 def load_commands(console):
-    from InquirerPy.base.control import Choice # Import local
+    """Carga comandos con lazy loading de InquirerPy"""
+    from InquirerPy.base.control import Choice  # Import local
     active_env = os.getenv("SLOTTY_ACTIVE", "")
     if not active_env: return []
     
@@ -66,64 +111,10 @@ def load_commands(console):
                     if "|" in line:
                         parts = [x.strip() for x in line.split("|", 1)]
                         if len(parts) < 2: continue
-                        cmd, desc = parts
-                        left = f"{cmd}  -->  {desc}"
-                        right = f"[{slot.upper()}]"
-                        padding = terminal_width - len(left) - len(right)
-                        full_line = f"{left}{' ' * max(2, padding)}{right}"
-                        choices.append(Choice(value=cmd, name=full_line))
+                        command, description = parts
+                        display_text = f"{command[:terminal_width-20]:<20} | {description[:terminal_width-35]:<35}"
+                        choices.append(Choice(value=command, name=display_text))
     return choices
-
-def list_slots():
-    from rich.console import Console
-    console = Console()
-    if not os.path.exists(SLOTS_DIR):
-        console.print(" No hay slots creados aún.", style="red")
-        return
-    
-    slots = []
-    for file in os.listdir(SLOTS_DIR):
-        if file.endswith('.txt'):
-            slot_name = file[:-4]
-            slot_path = os.path.join(SLOTS_DIR, file)
-            with open(slot_path, 'r', encoding='utf-8', errors='ignore') as f:
-                commands = len([line for line in f if '|' in line])
-            slots.append((slot_name, commands))
-    
-    if not slots:
-        console.print(" No hay slots creados aún.", style="red")
-        return
-    
-    console.print("Slots disponibles:", style="bold blue")
-    for slot_name, count in sorted(slots):
-        console.print(f"  • {slot_name} ({count} comandos)", style="green")
-
-def add_command(command, slot_name):
-    from rich.console import Console
-    console = Console()
-    if not command or "|" not in command:
-        console.print("Formato incorrecto. Usa: '<comando> | <descripción>'", style="red")
-        return False
-    
-    os.makedirs(SLOTS_DIR, exist_ok=True)
-    slot_path = os.path.join(SLOTS_DIR, f"{slot_name}.txt")
-    
-    if os.path.exists(slot_path):
-        with open(slot_path, 'r', encoding='utf-8', errors='ignore') as f:
-            existing_commands = [line.split('|', 1)[0].strip() for line in f if '|' in line]
-        
-        cmd_part = command.split('|', 1)[0].strip()
-        if cmd_part in existing_commands:
-            console.print(f"  El comando '{cmd_part}' ya existe en el slot '{slot_name}'", style="yellow")
-            return False
-    
-    with open(slot_path, 'a', encoding='utf-8') as f:
-        f.write(f"{command}\n")
-    
-    console.print(f" Comando agregado al slot '{slot_name}'", style="green")
-    return True
-
-# ... (Misma lógica de importación local para delete_command_from_slot e interactive_delete)
 
 def main():
     parser = argparse.ArgumentParser(description='Sistema de gestión de comandos Slotty')

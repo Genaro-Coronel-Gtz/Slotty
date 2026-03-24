@@ -8,7 +8,7 @@
 [*] No guardar Historial
 [*] Salir con Escape
 [ ] Fix para linux, Error: No recibe argumentos al ejecutar
-[ ] Fix en eliminar "slotty" de historial
+[ ] Fix eliminar comando "slotty" de historial
 [ ] Lanzar atajo desde codigo
 
 
