@@ -1,4 +1,4 @@
-# 🚀 Slotty - Sistema de Gestión de Comandos
+# 🚀 Slotty - Terminal App de Gestión de Comandos
 
 <div align="center">
   <img src="resources/banner.png" alt="Slotty Logo" width="100%" height="250" style=" object-fit: cover; border: 2px solid #2E3440; border-radius:10px;">
