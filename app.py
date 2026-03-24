@@ -1,8 +1,52 @@
 import os
 import sys
 import argparse
+import subprocess
 
 SLOTS_DIR = os.path.expanduser("~/.slotty/slots/")
+
+def clear_slotty_from_history():
+    """Elimina el comando 'slotty' del historial de shell"""
+    # Obtener la ruta del historial dinámicamente del sistema
+    try:
+        result = subprocess.run(['echo', '$HISTFILE'], shell=True, capture_output=True, text=True)
+        histfile = result.stdout.strip() if result.stdout else ""
+        
+        # Si no está definido, intentar rutas comunes
+        if not histfile or histfile == '$HISTFILE':
+            home = os.path.expanduser("~")
+            possible_paths = [
+                os.path.join(home, ".zsh_history"),
+                os.path.join(home, ".bash_history"),
+                os.path.join(home, ".history")
+            ]
+            for path in possible_paths:
+                if os.path.exists(path):
+                    histfile = path
+                    break
+    except Exception:
+        # Si falla la obtención, intentar rutas comunes
+        home = os.path.expanduser("~")
+        histfile = os.path.join(home, ".zsh_history")
+    
+    if histfile and os.path.exists(histfile):
+        try:
+            # Leer el historial
+            with open(histfile, 'r') as f:
+                lines = f.readlines()
+            
+            # Filtrar líneas que contengan 'slotty'
+            filtered_lines = [line for line in lines if 'slotty' not in line]
+            
+            # Escribir el historial filtrado
+            with open(histfile, 'w') as f:
+                f.writelines(filtered_lines)
+            
+            # Recargar el historial en la sesión actual
+            subprocess.run(['fc', '-R'], check=False, capture_output=True)
+        except Exception:
+            # Si falla, no hacer nada para no interrumpir el flujo
+            pass
 
 def load_commands(console):
     from InquirerPy.base.control import Choice # Import local
@@ -34,7 +78,7 @@ def list_slots():
     from rich.console import Console
     console = Console()
     if not os.path.exists(SLOTS_DIR):
-        console.print("❌ No hay slots creados aún.", style="red")
+        console.print(" No hay slots creados aún.", style="red")
         return
     
     slots = []
@@ -47,10 +91,10 @@ def list_slots():
             slots.append((slot_name, commands))
     
     if not slots:
-        console.print("❌ No hay slots creados aún.", style="red")
+        console.print(" No hay slots creados aún.", style="red")
         return
     
-    console.print("📋 Slots disponibles:", style="bold blue")
+    console.print("Slots disponibles:", style="bold blue")
     for slot_name, count in sorted(slots):
         console.print(f"  • {slot_name} ({count} comandos)", style="green")
 
@@ -58,7 +102,7 @@ def add_command(command, slot_name):
     from rich.console import Console
     console = Console()
     if not command or "|" not in command:
-        console.print("❌ Formato incorrecto. Usa: '<comando> | <descripción>'", style="red")
+        console.print("Formato incorrecto. Usa: '<comando> | <descripción>'", style="red")
         return False
     
     os.makedirs(SLOTS_DIR, exist_ok=True)
@@ -70,13 +114,13 @@ def add_command(command, slot_name):
         
         cmd_part = command.split('|', 1)[0].strip()
         if cmd_part in existing_commands:
-            console.print(f"⚠️  El comando '{cmd_part}' ya existe en el slot '{slot_name}'", style="yellow")
+            console.print(f"  El comando '{cmd_part}' ya existe en el slot '{slot_name}'", style="yellow")
             return False
     
     with open(slot_path, 'a', encoding='utf-8') as f:
         f.write(f"{command}\n")
     
-    console.print(f"✅ Comando agregado al slot '{slot_name}'", style="green")
+    console.print(f" Comando agregado al slot '{slot_name}'", style="green")
     return True
 
 # ... (Misma lógica de importación local para delete_command_from_slot e interactive_delete)
@@ -119,7 +163,13 @@ def main():
             choices=commands,
             border=True,
             vi_mode=False,
-            instruction=""
+            instruction="",
+            keybindings={
+                "interrupt": [
+                    {"key": "c-c"},  # Mantiene Ctrl+C por defecto
+                    {"key": "escape"}  # Agrega Escape como opción adicional
+                ]
+            }
         ).execute()
 
         if tmp_path and selected:
@@ -127,6 +177,10 @@ def main():
                 f.write(selected)
             for _ in range(3): sys.stdout.write("\033[A\033[K")
             sys.stdout.flush()
+            
+            # Limpiar 'slotty' del historial
+            clear_slotty_from_history()
+            
                 
     except (KeyboardInterrupt, EOFError):
         sys.exit(0)

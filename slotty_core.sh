@@ -24,8 +24,8 @@ function slotty() {
     
     # Modo normal: validación de slots activos
     if [[ -z "$SLOTTY_ACTIVE" ]]; then
-        echo "⚠️  No hay slots activos. Usa 'plug <nombre>' primero."
-        echo "💡 Slots disponibles: $(ls ~/.slotty/slots/ | sed 's/\.txt//g' | tr '\n' ' ')"
+        echo "No hay slots activos. Usa 'plug <nombre>' primero."
+        echo "Slots disponibles: $(ls ~/.slotty/slots/ | sed 's/\.txt//g' | tr '\n' ' ')"
         return 1
     fi
 
@@ -58,7 +58,7 @@ function slotty() {
 # 2. Función para Enchufar (Plug)
 function plug() {
     if [[ -z "$1" ]]; then
-        echo "❌ Uso: plug <nombre_del_slot>"
+        echo " Uso: plug <nombre_del_slot>"
         return 1
     fi
 

@@ -1,8 +1,9 @@
 # 🚀 Slotty - Sistema de Gestión de Comandos
 
 <div align="center">
-  <img src="resources/slotty.png" alt="Slotty Logo" width="200" height="200" style="border-radius: 50%; object-fit: cover; border: 4px solid #2E3440;">
+  <img src="resources/banner.png" alt="Slotty Logo" width="100%" height="220" style=" object-fit: cover; border: 2px solid #2E3440; border-radius:5px;">
 </div>
+<br>
 
 **Slotty** es un sistema de gestión de comandos con interfaz fuzzy search que te permite organizar, buscar y ejecutar comandos rápidamente desde tu terminal.
 
